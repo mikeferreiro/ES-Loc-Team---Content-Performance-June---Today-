@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Conversion Dashboard</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+        const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
+
+        const Globe = () => (
+            <svg className="inline w-5 h-5 mr-2 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        );
+
+        const VoiceConversionDashboard = () => {
+            const [selectedRegion, setSelectedRegion] = useState('latam');
+
+            const data = [
+                { name: 'Armando', origin: 'Latin America', latam: 53.0, spain: 37.9 },
+                { name: 'Selena', origin: 'Latin America', latam: 46.8, spain: 38.3 },
+                { name: 'Natalia', origin: 'Latin America', latam: 46.5, spain: 31.4 },
+                { name: 'Diego', origin: 'Spain', latam: 15.6, spain: 46.1 },
+                { name: 'Lorenzo', origin: 'Spain', latam: 11.6, spain: 47.5 },
+                { name: 'Arcadio', origin: 'Latin America', latam: 45.5, spain: 41.2 },
+                { name: 'Clara', origin: 'Spain', latam: 12.3, spain: 44.9 },
+                { name: 'Teresa', origin: 'Latin America', latam: 51.7, spain: 56.4 },
+                { name: 'Rosa', origin: 'Latin America', latam: 47.1, spain: 30.0 },
+                { name: 'Melissa', origin: 'Latin America', latam: 50.0, spain: 28.6 },
+                { name: 'Horacio', origin: 'Latin America', latam: 44.1, spain: 0.0 }
+            ];
+
+            const sortedData = [...data].sort((a, b) => {
+                if (selectedRegion === 'latam') {
+                    return b.latam - a.latam;
+                } else {
+                    return b.spain - a.spain;
+                }
+            });
+
+            const chartData = sortedData.map(item => ({
+                name: `${item.name} (${item.origin === 'Spain' ? 'ES' : 'LATAM'})`,
+                'Conversion Rate': selectedRegion === 'latam' ? item.latam : item.spain,
+                origin: item.origin,
+                fullName: item.name
+            }));
+
+            const spanishVoices = data.filter(v => v.origin === 'Spain');
+            const latinVoices = data.filter(v => v.origin === 'Latin America');
+
+            const avgSpanishInRegion = selectedRegion === 'latam'
+                ? spanishVoices.reduce((sum, item) => sum + item.latam, 0) / spanishVoices.length
+                : spanishVoices.reduce((sum, item) => sum + item.spain, 0) / spanishVoices.length;
+
+            const avgLatinInRegion = selectedRegion === 'latam'
+                ? latinVoices.reduce((sum, item) => sum + item.latam, 0) / latinVoices.length
+                : latinVoices.reduce((sum, item) => sum + item.spain, 0) / latinVoices.length;
+
+            const CustomBar = (props) => {
+                const { fill, x, y, width, height, payload } = props;
+                const isSpanish = payload.origin === 'Spain';
+                const color = isSpanish ? '#a855f7' : '#3b82f6';
+                
+                return (
+                    <rect
+                        x={x}
+                        y={y}
+                        width={width}
+                        height={height}
+                        fill={color}
+                        rx={8}
+                        ry={8}
+                    />
+                );
+            };
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 p-6">
+                    <div className="max-w-6xl mx-auto">
+                        
+                        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 mb-6 border border-white/20">
+                            <h1 className="text-4xl font-bold text-white mb-2">Voice Conversion Performance</h1>
+                            <p className="text-indigo-200">Regional Analysis: Voice Origin vs Conversion Rate</p>
+                        </div>
+
+                        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-6 mb-6 border border-white/20">
+                            <div className="flex justify-center gap-4 mb-8">
+                                <button
+                                    onClick={() => setSelectedRegion('latam')}
+                                    className={`px-8 py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${
+                                        selectedRegion === 'latam'
+                                            ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-2xl shadow-blue-500/50'
+                                            : 'bg-white/20 text-white hover:bg-white/30'
+                                    }`}
+                                >
+                                    <Globe />
+                                    Latin America
+                                </button>
+                                <button
+                                    onClick={() => setSelectedRegion('spain')}
+                                    className={`px-8 py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${
+                                        selectedRegion === 'spain'
+                                            ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-2xl shadow-purple-500/50'
+                                            : 'bg-white/20 text-white hover:bg-white/30'
+                                    }`}
+                                >
+                                    <Globe />
+                                    Spain
+                                </button>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl p-5 border border-blue-400/30">
+                                    <div className="text-blue-200 text-sm font-medium mb-1">Latin America Voices</div>
+                                    <div className="text-white text-2xl font-bold">{avgLatinInRegion.toFixed(1)}%</div>
+                                    <div className="text-blue-300 text-xs mt-1">Average conversion</div>
+                                </div>
+                                
+                                <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-xl p-5 border border-purple-400/30">
+                                    <div className="text-purple-200 text-sm font-medium mb-1">Spain Voices</div>
+                                    <div className="text-white text-2xl font-bold">{avgSpanishInRegion.toFixed(1)}%</div>
+                                    <div className="text-purple-300 text-xs mt-1">Average conversion</div>
+                                </div>
+
+                                <div className="bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 rounded-xl p-5 border border-emerald-400/30">
+                                    <div className="text-emerald-200 text-sm font-medium mb-1">Performance Gap</div>
+                                    <div className="text-white text-2xl font-bold">
+                                        {Math.abs(avgLatinInRegion - avgSpanishInRegion).toFixed(1)}%
+                                    </div>
+                                    <div className="text-emerald-300 text-xs mt-1">
+                                        {selectedRegion === 'latam' 
+                                            ? avgLatinInRegion > avgSpanishInRegion ? 'LATAM voices lead' : 'Spain voices lead'
+                                            : avgSpanishInRegion > avgLatinInRegion ? 'Spain voices lead' : 'LATAM voices lead'
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl p-4 mb-6 border border-yellow-400/30">
+                                <div className="text-yellow-200 font-bold text-lg mb-2">💡 Key Insight</div>
+                                <div className="text-white text-base">
+                                    {selectedRegion === 'latam' 
+                                        ? 'Latin American voices (blue) perform significantly better in Latin America. Spanish voices (purple) show lower conversion rates.'
+                                        : 'Spanish voices (purple) excel in Spain, outperforming Latin American voices (blue) by a significant margin.'
+                                    }
+                                </div>
+                            </div>
+
+                            <ResponsiveContainer width="100%" height={450}>
+                                <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
+                                    <XAxis 
+                                        dataKey="name" 
+                                        stroke="#fff" 
+                                        angle={-45}
+                                        textAnchor="end"
+                                        height={100}
+                                        interval={0}
+                                    />
+                                    <YAxis 
+                                        stroke="#fff" 
+                                        tickFormatter={(value) => `${value}%`}
+                                        domain={[0, 60]}
+                                    />
+                                    <Tooltip 
+                                        contentStyle={{ 
+                                            backgroundColor: '#1e293b', 
+                                            border: 'none', 
+                                            borderRadius: '12px', 
+                                            color: '#fff',
+                                            padding: '12px'
+                                        }}
+                                        formatter={(value) => [`${value.toFixed(1)}%`, 'Conversion Rate']}
+                                    />
+                                    <Bar 
+                                        dataKey="Conversion Rate" 
+                                        shape={<CustomBar />}
+                                    />
+                                </BarChart>
+                            </ResponsiveContainer>
+
+                            <div className="flex justify-center gap-6 mt-6">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                                    <span className="text-white text-sm">Latin America Origin</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 bg-purple-500 rounded"></div>
+                                    <span className="text-white text-sm">Spain Origin</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<VoiceConversionDashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>
