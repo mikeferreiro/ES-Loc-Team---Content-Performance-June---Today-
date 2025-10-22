@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Headway Dashboards — Combined</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* Global base */
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background:#0b0f1a; color:#fff; line-height:1.4;
+    }
+    a { color: #a5b4fc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .topnav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(13,19,33,0.8); backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .topnav-inner {
+      max-width: 1400px; margin: 0 auto; padding: 12px 16px; display:flex; gap:16px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
+    }
+    .topnav .links { display:flex; gap:14px; flex-wrap:wrap; }
+    .section {
+      padding: 36px 20px;
+    }
+    .section .container { max-width: 1400px; margin: 0 auto; }
+
+    /* -------- DASHBOARD 1: Jordi Reche x Headway Gems ---------- */
+    #dash1 {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+    #dash1 .header {
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 159, 64, 0.2));
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      text-align: center;
+    }
+    #dash1 h1 {
+      font-size: 2.8rem; margin-bottom: 10px;
+      background: linear-gradient(135deg, #ff6b6b, #ffa94d);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    #dash1 .subtitle { color: #ffd8a8; font-size: 1.2rem; }
+    #dash1 .gems-container {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 30px; margin-bottom: 30px;
+    }
+    #dash1 .gem-card {
+      background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+      border-radius: 20px; padding: 30px; border: 1px solid rgba(255,255,255,0.2);
+      transition: transform 0.3s;
+    }
+    #dash1 .gem-card:hover { transform: translateY(-5px); }
+    #dash1 .gem-header { display:flex; gap:20px; margin-bottom:25px; }
+    #dash1 .gem-thumbnail { width:120px; height:180px; border-radius:12px; flex-shrink:0; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; font-size:3rem; }
+    #dash1 .gem-thumbnail.ceo { background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); }
+    #dash1 .gem-thumbnail.communication { background: linear-gradient(135deg, #ffd166 0%, #ff8ba7 100%); }
+    #dash1 .gem-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+    #dash1 .gem-title-en { font-size: .95rem; color:#bbb; font-style: italic; margin-bottom: 15px; }
+    #dash1 .stats-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; }
+    #dash1 .stat-box { background: rgba(255,255,255,0.05); border-radius:12px; padding:15px; text-align:center; border:1px solid rgba(255,255,255,0.1); }
+    #dash1 .stat-label { font-size:.85rem; color:#aaa; margin-bottom:5px; }
+    #dash1 .stat-value { font-size:1.8rem; font-weight:700; color:#ffa94d; }
+    #dash1 .stat-value.conversion { color:#51cf66; }
+    #dash1 .summary {
+      background: linear-gradient(135deg, rgba(81, 207, 102, 0.15), rgba(55, 178, 77, 0.15));
+      border-radius: 20px; padding: 30px; border: 1px solid rgba(81,207,102,0.3); text-align:center;
+    }
+    #dash1 .summary-title { font-size:1.4rem; margin-bottom:20px; color:#51cf66; }
+    #dash1 .summary-stats { display:flex; justify-content:center; gap:40px; flex-wrap:wrap; }
+    #dash1 .summary-stat-value { font-size:2.5rem; font-weight:700; color:#51cf66; }
+    #dash1 .summary-stat-label { font-size:.95rem; color:#ccc; margin-top:5px; }
+
+    /* -------- DASHBOARD 2: ES Summary Production - Hispanic Authors ---------- */
+    #dash2 {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    }
+    #dash2 .header {
+      background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px);
+      border-radius: 20px; padding: 40px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.3);
+      text-align: center;
+    }
+    #dash2 h1 { font-size: 2.8rem; margin-bottom: 10px; }
+    #dash2 .subtitle { color:#f0e6ff; font-size:1.2rem; }
+    #dash2 .summary-box {
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+      border-radius: 20px; padding:30px; margin-bottom:30px; border:1px solid rgba(255,255,255,0.3);
+    }
+    #dash2 .summary-stats { display:flex; justify-content:center; gap:50px; flex-wrap:wrap; }
+    #dash2 .summary-stat-value { font-size:3rem; font-weight:700; color:#ffd43b; }
+    #dash2 .summary-stat-label { font-size:1rem; color:#e0e0e0; margin-top:5px; }
+    #dash2 .chart-section {
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+      border-radius: 20px; padding:30px; margin-bottom:30px; border:1px solid rgba(255,255,255,0.3);
+    }
+    #dash2 .chart-title { font-size:1.5rem; margin-bottom:20px; text-align:center; }
+    #dash2 .chart-container { position:relative; height: 600px; }
+    #dash2 .titles-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:15px; }
+    #dash2 .title-card {
+      background: rgba(255,255,255,0.1); border-radius:12px; padding:15px; border:1px solid rgba(255,255,255,0.2);
+      display:flex; justify-content:space-between; align-items:center; transition: transform .2s;
+    }
+    #dash2 .title-card:hover { transform: translateX(5px); background: rgba(255,255,255,0.15); }
+    #dash2 .title-name { font-size:.95rem; flex:1; margin-right:15px; }
+    #dash2 .title-rating { font-size:1.5rem; font-weight:700; color:#ffd43b; white-space:nowrap; }
+    #dash2 .rating-badge { display:inline-flex; align-items:center; gap:5px; }
+
+    /* -------- DASHBOARD 3: New Releases Localization ---------- */
+    #dash3 {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%);
+    }
+    #dash3 .header {
+      background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+      border-radius: 20px; padding: 40px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+    }
+    #dash3 h1 {
+      font-size: 3rem; margin-bottom: 10px;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    #dash3 .subtitle { color:#c7d2fe; font-size:1.2rem; }
+    #dash3 .main-stats {
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap:25px; margin-bottom: 10px;
+    }
+    #dash3 .stat-card {
+      background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+      border-radius: 20px; padding:35px; border: 1px solid rgba(255,255,255,0.2);
+      text-align:center; transition: transform .3s; position:relative; overflow:hidden;
+    }
+    #dash3 .stat-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:4px; background: linear-gradient(90deg, #60a5fa, #a78bfa);
+    }
+    #dash3 .stat-card:hover { transform: translateY(-5px); }
+    #dash3 .stat-icon { font-size:3rem; margin-bottom:15px; }
+    #dash3 .stat-value {
+      font-size:3.5rem; font-weight:700; margin-bottom:10px;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    #dash3 .stat-label { font-size:1.1rem; color:#cbd5e1; font-weight:500; }
+
+    /* spacing between sections */
+    #dash1 + #dash2, #dash2 + #dash3 { border-top: 1px solid rgba(255,255,255,0.08); }
+  </style>
+</head>
+<body>
+
+  <!-- Top navigation -->
+  <div class="topnav">
+    <div class="topnav-inner">
+      <strong>Headway Dashboards</strong>
+      <div class="links">
+        <a href="#dash1">💎 Gems Performance</a>
+        <a href="#dash2">📚 ES Summary Production</a>
+        <a href="#dash3">🚀 New Releases Localization</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard 1 -->
+  <section id="dash1" class="section">
+    <div class="container">
+      <div class="header">
+        <h1>💎 Jordi Reche x Headway Gems</h1>
+        <p class="subtitle">Performance Dashboard - Influencer Collaboration</p>
+      </div>
+
+      <div class="gems-container">
+        <div class="gem-card">
+          <div class="gem-header">
+            <div class="gem-thumbnail ceo">💼</div>
+            <div class="gem-info">
+              <div class="gem-title">Lidera como un CEO</div>
+              <div class="gem-title-en">Lead like a CEO</div>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-box"><div class="stat-label">iOS Rating</div><div class="stat-value">4.48</div></div>
+            <div class="stat-box"><div class="stat-label">Android Rating</div><div class="stat-value">4.25</div></div>
+            <div class="stat-box"><div class="stat-label">Conversion</div><div class="stat-value conversion">78.5%</div></div>
+          </div>
+        </div>
+
+        <div class="gem-card">
+          <div class="gem-header">
+            <div class="gem-thumbnail communication">🗣</div>
+            <div class="gem-info">
+              <div class="gem-title">Todo lo que necesitas saber sobre comunicación no verbal</div>
+              <div class="gem-title-en">All you need to know about non-verbal communication</div>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-box"><div class="stat-label">iOS Rating</div><div class="stat-value">4.50</div></div>
+            <div class="stat-box"><div class="stat-label">Android Rating</div><div class="stat-value">4.89</div></div>
+            <div class="stat-box"><div class="stat-label">Conversion</div><div class="stat-value conversion">68.9%</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="summary-title">📊 Overall Performance</div>
+        <div class="summary-stats">
+          <div class="summary-stat">
+            <div class="summary-stat-value">4.53</div>
+            <div class="summary-stat-label">Average Rating</div>
+          </div>
+          <div class="summary-stat">
+            <div class="summary-stat-value">73.7%</div>
+            <div class="summary-stat-label">Average Conversion</div>
+          </div>
+          <div class="summary-stat">
+            <div class="summary-stat-value">2</div>
+            <div class="summary-stat-label">Published Gems</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard 2 -->
+  <section id="dash2" class="section">
+    <div class="container">
+      <div class="header">
+        <h1>📚 ES Summary Production - Hispanic Authors</h1>
+        <p class="subtitle">Ratings & Engagement Analysis</p>
+      </div>
+
+      <div class="summary-box">
+        <div class="summary-stats">
+          <div class="summary-stat">
+            <div class="summary-stat-value">12</div>
+            <div class="summary-stat-label">Total Titles</div>
+          </div>
+          <div class="summary-stat">
+            <div class="summary-stat-value">4.63</div>
+            <div class="summary-stat-label">Average Rating</div>
+          </div>
+          <div class="summary-stat">
+            <div class="summary-stat-value">2,800+</div>
+            <div class="summary-stat-label">Summary Starts</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-section">
+        <div class="chart-title">⭐ Ratings Comparison</div>
+        <div class="chart-container">
+          <canvas id="ratingsChart_es_hispanic"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-section">
+        <div class="chart-title">📋 All Titles</div>
+        <div class="titles-grid" id="titlesGrid_es_hispanic"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard 3 -->
+  <section id="dash3" class="section">
+    <div class="container">
+      <div class="header">
+        <h1>🚀 New Releases Localization</h1>
+        <p class="subtitle">Performance Overview - Recent Launches</p>
+      </div>
+
+      <div class="main-stats">
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-value">59%</div>
+          <div class="stat-label">Conversion Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-value">4.64</div>
+          <div class="stat-label">Average Rating</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-value">22</div>
+          <div class="stat-label">Total Titles</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🎯</div>
+          <div class="stat-value">2,900</div>
+          <div class="stat-label">Summary Starts</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JS for Dashboard 2 only -->
+  <script>
+    (function() {
+      const titles = [
+        { name: 'No te comas el coco: 10 psicosoluciones para salir de las trampas de la mente', rating: 4.78 },
+        { name: 'Terapia para llevar: 100 herramientas psicológicas para llevar mejor tu día a día', rating: 4.75 },
+        { name: 'Homo Solver: Los 15 problemas que deberás resolver para que tu vida valga la pena', rating: 4.74 },
+        { name: 'Sabia Mente: Sabiduría práctica para la vida moderna', rating: 4.72 },
+        { name: 'El milagro antiestrés: Cómo enfrentar la mayor epidemia de este siglo', rating: 4.69 },
+        { name: 'Los 7 pilares del amor propio: Cómo forjar una relación profunda y enriquecedora con uno mismo', rating: 4.66 },
+        { name: 'Es manipulación y no lo sabes: Desactiva las trampas emocionales en todos los ámbitos de tu vida', rating: 4.62 },
+        { name: 'Ser feliz es fácil: El método más simple para disfrutar de la vida', rating: 4.59 },
+        { name: 'Educar hijos felices en un mundo de locos: 7 hábitos para conseguirlo', rating: 4.56 },
+        { name: 'El pequeño libro coreano de la felicidad: Alegría, resiliencia y el arte de dar', rating: 4.47 },
+        { name: 'Qué hacer cuando todo cambia: Esquiva la irrelevancia y aprovecha la era de la IA generativa', rating: 4.47 },
+        { name: 'Tu miedo es tu poder: Afronta tus miedos y transforma tu vida', rating: 4.44 }
+      ];
+
+      const sortedTitles = [...titles].sort((a, b) => b.rating - a.rating);
+
+      const ctx = document.getElementById('ratingsChart_es_hispanic').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: sortedTitles.map(t => {
+            const words = t.name.split(':')[0].split(' ');
+            return words.slice(0, 5).join(' ') + (words.length > 5 ? '...' : '');
+          }),
+          datasets: [{
+            label: 'Rating',
+            data: sortedTitles.map(t => t.rating),
+            backgroundColor: sortedTitles.map(t => {
+              if (t.rating >= 4.7) return '#ffd43b';
+              if (t.rating >= 4.6) return '#74c0fc';
+              return '#b197fc';
+            }),
+            borderRadius: 8,
+            borderSkipped: false,
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1a1a2e',
+              padding: 12,
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              borderColor: '#764ba2',
+              borderWidth: 2,
+              callbacks: {
+                label: function(context) {
+                  return 'Rating: ' + context.parsed.x.toFixed(2) + ' ⭐';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: false, min: 4.3, max: 4.8,
+              ticks: { color: '#fff', callback: v => Number(v).toFixed(1) },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            y: {
+              ticks: { color: '#fff', font: { size: 11 } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+
+      const titlesGrid = document.getElementById('titlesGrid_es_hispanic');
+      sortedTitles.forEach(title => {
+        const card = document.createElement('div');
+        card.className = 'title-card';
+        card.innerHTML = `
+          <div class="title-name">${title.name}</div>
+          <div class="title-rating">
+            <span class="rating-badge">⭐ ${title.rating.toFixed(2)}</span>
+          </div>
+        `;
+        titlesGrid.appendChild(card);
+      });
+    })();
+  </script>
+</body>
+</html>
